@@ -1,0 +1,48 @@
+name: Build and Deploy to Azure
+
+# Trigger this workflow on every push to the 'main' branch
+on:
+  push:
+    branches: [ "" ]
+
+env:
+  AZURE_WEBAPP_NAME: 'your-unique-app-name'   # Change this to your Azure App Service name
+  AZURE_REGISTRY_URL: 'yourregistry.azurecr.io' # Change this to your Azure Container Registry URL
+  IMAGE_NAME: 'simple-notes-app'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Check out the repository code
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@v3
+
+      # 2. Log in to the Azure Container Registry (ACR)
+      - name: 'Log in to Azure Container Registry'
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ env.AZURE_REGISTRY_URL }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      # 3. Build and push the Docker image to ACR
+      - name: 'Build and push Docker image'
+        run: |
+          docker build . -t ${{ env.AZURE_REGISTRY_URL }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          docker push ${{ env.AZURE_REGISTRY_URL }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+      # 4. Log in to Azure to deploy
+      - name: 'Log in to Azure'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # 5. Deploy the new image to Azure App Service
+      - name: 'Deploy to Azure App Service'
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          images: '${{ env.AZURE_REGISTRY_URL }}/${{ env.IMAGE_NAME }}:${{ github.sha }}'
+          # Here we are setting the Environment Variables for our production app!
+          app-settings-json: '{ "PORT": "8080", "DATABASE_URL": "${{ secrets.PROD_DATABASE_URL }}" }'
