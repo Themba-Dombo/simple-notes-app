@@ -1,9 +1,11 @@
-name: Build and Deploy to Azure
+name: Test, Build, and Deploy to Azure
 
-# Trigger this workflow on every push to the 'main' branch
+# Trigger this workflow on every push and pull request to any branch
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "**" ] # Runs on pushes to all branches
+  pull_request:
+    branches: [ "main" ] # Runs on pull requests targeting the main branch
 
 env:
   AZURE_WEBAPP_NAME: 'simple-notes-app'   # Change this to your Azure App Service name
@@ -11,12 +13,38 @@ env:
   IMAGE_NAME: 'simple-notes-app'
 
 jobs:
+  test:
+    name: Run Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@v4
+
+      - name: 'Set up Node.js'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 'Install Dependencies'
+        run: npm install
+        working-directory: ./notes-app # Run in the frontend folder
+
+      - name: 'Run Tests'
+        run: npm test
+        working-directory: ./notes-app # Run in the frontend folder
+
   build-and-deploy:
+    # This job now depends on the 'test' job succeeding
+    needs: test
+    # This condition ensures deployment ONLY happens on a push to the main branch
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    name: Build and Deploy
     runs-on: ubuntu-latest
     steps:
       # 1. Check out the repository code
       - name: 'Checkout GitHub Action'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # 2. Log in to the Azure Container Registry (ACR)
       - name: 'Log in to Azure Container Registry'
