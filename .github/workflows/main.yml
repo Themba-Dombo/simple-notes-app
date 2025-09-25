@@ -3,11 +3,11 @@ name: Build and Deploy to Azure
 # Trigger this workflow on every push to the 'main' branch
 on:
   push:
-    branches: [ "" ]
+    branches: [ "main" ]
 
 env:
-  AZURE_WEBAPP_NAME: 'your-unique-app-name'   # Change this to your Azure App Service name
-  AZURE_REGISTRY_URL: 'yourregistry.azurecr.io' # Change this to your Azure Container Registry URL
+  AZURE_WEBAPP_NAME: 'simple-notes-app'   # Change this to your Azure App Service name
+  AZURE_REGISTRY_URL: 'simplenotesacr.azurecr.io' # Change this to your Azure Container Registry URL
   IMAGE_NAME: 'simple-notes-app'
 
 jobs:

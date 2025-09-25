@@ -4,7 +4,7 @@ const path = require('path');
 
 const app = express();
 // Use the PORT environment variable, defaulting to 8080
-const PORT = process.env.PORT || 8082;
+const PORT = process.env.PORT || 8080;
 
 // This is where you would connect to a real database!
 // We're logging it to show that the environment variable is being used.

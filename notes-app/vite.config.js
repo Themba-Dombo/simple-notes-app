@@ -8,7 +8,7 @@ export default defineConfig({
     // This proxy forwards requests from /api to our backend server
     proxy: {
       '/api': {
-        target: 'http://localhost:8082', // The address of our backend
+        target: `http://localhost:${process.env.PORT || '8080'}`, // The address of our backend
         changeOrigin: true,
       },
     }
