@@ -2,7 +2,7 @@
 # We use a specific Node version for consistency
 FROM node:18-alpine AS build-stage
 
-WORKDIR /app/frontend
+WORKDIR /app/notes-app
 
 # Copy package files and install dependencies
 COPY notes-app/package*.json ./
@@ -29,7 +29,7 @@ COPY backend/ ./
 
 # **The Magic Step**: Copy the built frontend from the previous stage
 # into a 'public' directory that Express can serve.
-COPY --from=build-stage /app/frontend/dist ./public
+COPY --from=build-stage /app/notes-app/dist ./public
 
 # Tell Docker what port the container will run on
 EXPOSE 8080
