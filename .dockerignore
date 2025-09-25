@@ -1,0 +1,19 @@
+# Git and GitHub specific files
+.git
+.github
+.gitignore
+
+# Docker specific files
+Dockerfile
+.dockerignore
+
+# Dependencies - these will be installed inside the container
+backend/node_modules
+notes-app/node_modules
+
+# Project documentation - not needed in the final image
+README.md
+
+# Local environment files
+.env
+.nvmrc
