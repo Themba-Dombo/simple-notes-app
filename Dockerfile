@@ -1,6 +1,6 @@
 # Stage 1: Build the React Frontend
 # We use a specific Node version for consistency
-FROM node:18-alpine AS build-stage
+FROM node:20-alpine AS build-stage
 
 WORKDIR /app/notes-app
 
@@ -16,7 +16,7 @@ RUN npm run build
 
 # Stage 2: Setup the Node.js Backend & Combine
 # Use the same base image for consistency
-FROM node:18-alpine AS production-stage
+FROM node:20-alpine AS production-stage
 
 WORKDIR /app/backend
 
